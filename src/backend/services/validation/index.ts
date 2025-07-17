@@ -92,7 +92,7 @@ export class Validar_celular {
   }
 
   public isValidBrazilianPhone(phone: string) {
-    if (!this.regex.test(phone)) throw new Error("Numero de celular invalido.")
+    if (!this.regex.test(phone.replace(" ", ""))) throw new Error("Numero de celular invalido.")
   }
 
   public async iniciar_validacao({ type, uuid }: Twofa) {
