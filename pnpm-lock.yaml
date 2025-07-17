@@ -14,6 +14,9 @@ importers:
       '@prisma/extension-accelerate':
         specifier: ^2.0.0
         version: 2.0.0(@prisma/client@6.8.2(prisma@6.8.2(typescript@5.8.3))(typescript@5.8.3))
+      abacatepay-nodejs-sdk:
+        specifier: ^1.4.1
+        version: 1.4.1
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -819,6 +822,9 @@ packages:
     resolution: {integrity: sha512-friS8NEQfHaDbkThxopGk+LuE5v3iY0StruifjQEt7SLbA46OnfgMO15sOTkbpJkol6RB+1l1TYPXh0sCddpvA==}
     cpu: [x64]
     os: [win32]
+
+  abacatepay-nodejs-sdk@1.4.1:
+    resolution: {integrity: sha512-9ELSNwrrPJRgWENr/JJtQZNNlNUnE1V08ANQOmRD2qAxmAs7AM76yiBzIli4nFMNO749JYDNTsLNKLjBNGkd9w==}
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -2760,6 +2766,8 @@ snapshots:
 
   '@unrs/resolver-binding-win32-x64-msvc@1.7.2':
     optional: true
+
+  abacatepay-nodejs-sdk@1.4.1: {}
 
   acorn-jsx@5.3.2(acorn@8.14.1):
     dependencies:
