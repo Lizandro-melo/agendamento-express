@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "pagamento" ALTER COLUMN "pago" SET DEFAULT 'PENDING',
+ALTER COLUMN "pago" SET DATA TYPE TEXT;

@@ -1,0 +1,180 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Metodo_pagamento {
+  PIX
+  CRED
+  DEB
+  GRATIS
+}
+
+model user {
+  uuid_user           String         @id @unique @default(uuid())
+  name_user           String
+  numero_celular_user String         @unique
+  email               String?        @unique
+  senha               String?
+  status              Boolean        @default(true)
+  criado              DateTime       @default(now())
+  alterado            DateTime?
+  otp_enviado         String?
+  otp_update          DateTime?
+  empresas            user_empresa[]
+
+  Agendamento agendamento[]
+}
+
+model empresa {
+  uuid_empresa            String         @id @unique @default(uuid())
+  nome_empresa            String
+  email_empresa           String
+  redes                   Json?
+  numero_celular_empresa  String
+  numero_telefone_empresa String?
+  logo                    String?
+  cnpj                    String         @unique
+  status                  Boolean        @default(true)
+  criado                  DateTime       @default(now())
+  alterado                DateTime?
+  plano_pagamento         String?
+  valor_pagamento         Int
+  dias_tolerancia         Int            @default(7)
+  descricao               String?
+  users                   user_empresa[]
+
+  Servico_principais  servico_principais[]
+  Pagamento           pagamento[]
+  empresa_proficional empresa_proficional[]
+}
+
+model proficional {
+  uuid_proficional               String    @id @unique @default(uuid())
+  nome_proficional               String
+  email_proficional              String    @unique
+  numero_celular_proficional     String    @unique
+  senha                          String
+  redes                          Json?
+  cpf                            String    @unique
+  validation_celular_proficional Boolean   @default(false)
+  otp_enviado                    String?
+  otp_update                     DateTime?
+
+  agendamento         agendamento[]
+  disponibilidade     disponibilidade[]
+  empresa_proficional empresa_proficional[]
+}
+
+model empresa_proficional {
+  id               Int          @id @unique @default(autoincrement())
+  uuid_empresa     String
+  uuid_proficional String
+  empresa          empresa?     @relation(fields: [uuid_empresa], references: [uuid_empresa])
+  proficional      proficional? @relation(fields: [uuid_proficional], references: [uuid_proficional])
+}
+
+model user_empresa {
+  id           Int    @id @default(autoincrement())
+  uuid_user    String
+  uuid_empresa String
+
+  user    user    @relation(fields: [uuid_user], references: [uuid_user])
+  empresa empresa @relation(fields: [uuid_empresa], references: [uuid_empresa])
+}
+
+model servico_principais {
+  uuid_servico_principal String       @id @unique @default(uuid())
+  nome                   String
+  descricao              String?
+  logo                   String?
+  status                 Boolean      @default(true)
+  empresa_uuid_empresa   String
+  empresa                empresa      @relation(fields: [empresa_uuid_empresa], references: [uuid_empresa])
+  Subservico             subservico[]
+}
+
+model subservico {
+  uuid_subservico        String             @id @unique @default(uuid())
+  nome                   String
+  valor                  Decimal
+  descricao              String?
+  duracao                DateTime
+  status                 Boolean            @default(true)
+  uuid_servico_principal String
+  servico_principal      servico_principais @relation(fields: [uuid_servico_principal], references: [uuid_servico_principal])
+
+  Agendamento agendamento[]
+}
+
+model servico_add {
+  uuid_servico_add    String                @id @unique @default(uuid())
+  nome                String
+  valor               String
+  status              Boolean               @default(true)
+  duracao             DateTime
+  Agendamento_servico agendamento_servico[]
+}
+
+model agendamento {
+  uuid_agendamento     String            @id @unique @default(uuid())
+  uuid_subservico      String
+  valor_total          Decimal
+  duracao              DateTime
+  data_agendamento     DateTime
+  pago                 Boolean           @default(false)
+  metodo_pagamento     Metodo_pagamento?
+  token_pagamento      String?
+  ultimo_numero_cartao String?
+  uuid_user            String
+  chave_pix            String?
+  criado               DateTime          @default(now())
+  uuid_proficional     String
+  user                 user              @relation(fields: [uuid_user], references: [uuid_user])
+  subservico           subservico        @relation(fields: [uuid_subservico], references: [uuid_subservico])
+
+  proficional         proficional           @relation(fields: [uuid_proficional], references: [uuid_proficional])
+  agendamento_servico agendamento_servico[]
+  disponibilidade     disponibilidade[]
+}
+
+model agendamento_servico {
+  id               Int         @id @unique @default(autoincrement())
+  uuid_servico_add String
+  uuid_agendamento String
+  servico_add      servico_add @relation(fields: [uuid_servico_add], references: [uuid_servico_add])
+  agendamento      agendamento @relation(fields: [uuid_agendamento], references: [uuid_agendamento])
+}
+
+model pagamento {
+  uuid_pagamento   String           @id @unique @default(uuid())
+  uuid_empresa     String
+  pago             String           @default("PENDING")
+  valor            Int
+  metodo_pagamento Metodo_pagamento
+  link             String
+  criado           DateTime         @default(now())
+  data_vencimento  DateTime?
+  empresa          empresa          @relation(fields: [uuid_empresa], references: [uuid_empresa])
+}
+
+model disponibilidade {
+  id               Int          @id @unique @default(autoincrement())
+  data_hora        DateTime
+  status           Boolean      @default(true)
+  uuid_proficional String
+  uuid_agendamento String?
+  proficional      proficional  @relation(fields: [uuid_proficional], references: [uuid_proficional])
+  agendamento      agendamento? @relation(fields: [uuid_agendamento], references: [uuid_agendamento])
+}
