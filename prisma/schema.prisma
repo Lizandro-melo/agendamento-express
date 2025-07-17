@@ -21,6 +21,12 @@ enum Metodo_pagamento {
   GRATIS
 }
 
+enum Role {
+  USER
+  MANAGE
+  ADMIN
+}
+
 model user {
   uuid_user           String         @id @unique @default(uuid())
   name_user           String
@@ -61,20 +67,20 @@ model empresa {
 }
 
 model proficional {
-  uuid_proficional               String    @id @unique @default(uuid())
+  uuid_proficional               String                @id @unique @default(uuid())
   nome_proficional               String
-  email_proficional              String    @unique
-  numero_celular_proficional     String    @unique
+  email_proficional              String                @unique
+  numero_celular_proficional     String                @unique
   senha                          String
   redes                          Json?
-  cpf                            String    @unique
-  validation_celular_proficional Boolean   @default(false)
+  cpf                            String                @unique
+  validation_celular_proficional Boolean               @default(false)
   otp_enviado                    String?
   otp_update                     DateTime?
-
-  agendamento         agendamento[]
-  disponibilidade     disponibilidade[]
-  empresa_proficional empresa_proficional[]
+  role                           Role
+  agendamento                    agendamento[]
+  disponibilidade                disponibilidade[]
+  empresa_proficional            empresa_proficional[]
 }
 
 model empresa_proficional {
